@@ -10,6 +10,10 @@ buildscript {
 	}
 }
 
+plugins {
+    id 'nu.studer.jooq' version '2.0.2'
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
@@ -32,4 +36,35 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	runtime('com.h2database:h2')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+	jooqRuntime('com.h2database:h2')
+}
+
+jooq {
+   brewdata(sourceSets.main) {
+       jdbc {
+           driver = 'org.h2.Driver'
+           url = 'jdbc:h2:~/test'
+           user = 'sa'
+           password = ''
+       }
+       generator {
+           name = 'org.jooq.util.DefaultGenerator'
+           strategy {
+               name = 'org.jooq.util.DefaultGeneratorStrategy'
+           }
+           database {
+               name = 'org.jooq.util.h2.H2Database'
+           }
+           generate {
+               relations = true
+               deprecated = false
+               records = true
+               immutablePojos = true
+               fluentSetters = true
+           }
+           target {
+               packageName = 'com.po.iot.brewdata'
+           }
+       }
+   }
 }
