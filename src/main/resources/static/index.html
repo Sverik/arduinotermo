@@ -1,0 +1,63 @@
+<html>
+<head>
+<style type="text/css">
+.bignumber {
+	font-size: xx-large;
+	font-family: sans-serif;
+}
+</style>
+</head>
+<body>
+<h1>Tere!</h1>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<textarea rows="5" cols="40" id="log_ta"></textarea>
+<form action="#"><input type="text" width="2" id="hours" value="48"><input type="button" value="Lae" onclick="lae()"></form>
+<div id="chart_div"></div>
+<div id="lasttemp" class="bignumber"></div>
+<script type="text/javascript">
+
+var tempData = new Array();
+$(document).ready(function() {
+});
+
+google.charts.load('current', {packages: ['corechart', 'line']});
+google.charts.setOnLoadCallback(drawBasic);
+
+function lae() {
+	drawBasic();
+}
+
+function drawBasic() {
+		var jsonData = $.ajax({
+		    url: "/temperature?hours=" + $("#hours").val(),
+		    dataType: "json",
+		    async: false
+		}).responseJSON.temperatures;
+		
+		$("#log_ta").val(jsonData);
+		$("#lasttemp").html(jsonData[jsonData.length - 1][1]);
+
+      var data = new google.visualization.DataTable();
+
+      data.addColumn('number', 'X');
+      data.addColumn('number', 'Dogs');
+
+      data.addRows(jsonData);
+      
+      var options = {
+        hAxis: {
+          title: 'Time'
+        },
+        vAxis: {
+          title: 'Popularity'
+        }
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+
+      chart.draw(data, options);
+    }
+</script>
+</body>
+</html>
