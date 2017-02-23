@@ -43,7 +43,7 @@ jooq {
    brewdata(sourceSets.main) {
        jdbc {
            driver = 'org.h2.Driver'
-           url = 'jdbc:h2:~/test'
+           url = 'jdbc:h2:~/brewmon/data'
            user = 'sa'
            password = ''
        }

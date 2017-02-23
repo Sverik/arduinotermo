@@ -60,9 +60,13 @@ function drawBasic() {
         axes: {
         	x: {
         		title: 'Aeg',
-        		format: 'MM.dd HH:mm'
         	},
         	y: {
+        		all: {
+        			format: {
+        				pattern: 'decimal'
+        			}
+        		},
         		Temperatuur: {
         			label: 'Temperatuur'
         		},
@@ -73,7 +77,6 @@ function drawBasic() {
         }
       };
 
-//      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
       var chart = new google.charts.Line(document.getElementById('chart_div'));
 
       chart.draw(data, options);
