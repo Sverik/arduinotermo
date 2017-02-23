@@ -3,13 +3,13 @@ package com.po.iot;
 import java.util.List;
 
 public class TemperatureDataList {
-	private final List<long[]> temperatures;
+	private final List<Object[]> temperatures;
 
-	public TemperatureDataList(List<long[]> temperatures) {
+	public TemperatureDataList(List<Object[]> temperatures) {
 		this.temperatures = temperatures;
 	}
 
-	public List<long[]> getTemperatures() {
+	public List<Object[]> getTemperatures() {
 		return temperatures;
 	}
 	

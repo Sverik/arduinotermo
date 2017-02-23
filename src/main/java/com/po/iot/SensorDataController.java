@@ -55,9 +55,9 @@ public class SensorDataController {
 	public TemperatureDataList temperature(@RequestParam(value="hours", defaultValue="48") long hours) {
 		long from = System.currentTimeMillis() - hours * 60 * 60 * 1000;
 		Result<EnvironmentdataRecord> data = dsl.selectFrom(ENVIRONMENTDATA).where(ENVIRONMENTDATA.TIMESTAMP.greaterOrEqual(from)).orderBy(ENVIRONMENTDATA.TIMESTAMP).fetch();
-		List<long[]> temperatures = new ArrayList<long[]>();
+		List<Object[]> temperatures = new ArrayList<Object[]>();
 		for (EnvironmentdataRecord rec : data) {
-			temperatures.add(new long[]{rec.get(ENVIRONMENTDATA.TIMESTAMP), (long)(rec.get(ENVIRONMENTDATA.TEMPERATURE).doubleValue() * 10d)});
+			temperatures.add(new Object[]{rec.get(ENVIRONMENTDATA.TIMESTAMP), rec.get(ENVIRONMENTDATA.TEMPERATURE).doubleValue(), rec.get(ENVIRONMENTDATA.HUMIDITY).doubleValue()});
 		}
 		return new TemperatureDataList(temperatures);
 	}

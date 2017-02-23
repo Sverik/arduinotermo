@@ -1,5 +1,6 @@
 <html>
 <head>
+<title>Sihi olud</title>
 <style type="text/css">
 .bignumber {
 	font-size: xx-large;
@@ -8,13 +9,11 @@
 </style>
 </head>
 <body>
-<h1>Tere!</h1>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<textarea rows="5" cols="40" id="log_ta"></textarea>
-<form action="#"><input type="text" width="2" id="hours" value="48"><input type="button" value="Lae" onclick="lae()"></form>
+<input type="text" width="2" id="hours" value="8"><input type="button" value="... viimast tundi" onclick="lae()">
 <div id="chart_div"></div>
-<div id="lasttemp" class="bignumber"></div>
+<span id="lasttemp" class="bignumber"></span>&nbsp;&nbsp;&nbsp;<span id="lasthum" class="bignumber"></span>
 <script type="text/javascript">
 
 var tempData = new Array();
@@ -35,26 +34,47 @@ function drawBasic() {
 		    async: false
 		}).responseJSON.temperatures;
 		
-		$("#log_ta").val(jsonData);
-		$("#lasttemp").html(jsonData[jsonData.length - 1][1]);
+		$("#lasttemp").html(jsonData[jsonData.length - 1][1] + " °C,");
+		$("#lasthum").html(jsonData[jsonData.length - 1][2] + "%");
+		
+		for (var i = 0 ; i < jsonData.length ; i++) {
+			jsonData[i][0] = new Date(jsonData[i][0]);
+		}
+/* 		var dateFormatter = new google.visualization.DateFormat({pattern: 'MM.dd HH:mm'});
+		dateFormatter.format(jsonData, 0);
+ */		
 
       var data = new google.visualization.DataTable();
 
-      data.addColumn('number', 'X');
-      data.addColumn('number', 'Dogs');
+      data.addColumn('datetime', 'Aeg');
+      data.addColumn('number', 'temperatuur');
+      data.addColumn('number', 'õhuniiskus');
 
       data.addRows(jsonData);
       
       var options = {
-        hAxis: {
-          title: 'Time'
+        series: {
+        	0: {axis: 'Temperatuur'},
+        	1: {axis: 'Niiskus'}
         },
-        vAxis: {
-          title: 'Popularity'
+        axes: {
+        	x: {
+        		title: 'Aeg',
+        		format: 'MM.dd HH:mm'
+        	},
+        	y: {
+        		Temperatuur: {
+        			label: 'Temperatuur'
+        		},
+        		Niiskus: {
+        			label: 'Suhteline õhuniiskus'
+        		}
+        	}
         }
       };
 
-      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+//      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+      var chart = new google.charts.Line(document.getElementById('chart_div'));
 
       chart.draw(data, options);
     }
