@@ -50,6 +50,7 @@ function drawBasic() {
       data.addColumn('datetime', 'Aeg');
       data.addColumn('number', 'temperatuur');
       data.addColumn('number', 'õhuniiskus');
+      data.addColumn({type: 'string', role: 'annotation'});
 
       data.addRows(jsonData);
       
