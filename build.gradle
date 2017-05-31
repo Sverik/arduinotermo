@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		springBootVersion = '1.5.1.RELEASE'
+		springBootVersion = '1.5.3.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -20,7 +20,7 @@ apply plugin: 'org.springframework.boot'
 
 jar {
 	baseName = 'brewmon'
-	version = '0.0.3-SNAPSHOT'
+	version = '0.0.4-SNAPSHOT'
 }
 
 sourceCompatibility = 1.8

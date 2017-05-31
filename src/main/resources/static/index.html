@@ -30,13 +30,18 @@ function lae() {
 
 function drawBasic() {
 		var jsonData = $.ajax({
-		    url: "/temperature?hours=" + $("#hours").val(),
+		    url: "/joined?hours=" + $("#hours").val(),
 		    dataType: "json",
 		    async: false
-		}).responseJSON.temperatures;
+		}).responseJSON.data;
 		
-		$("#lasttemp").html(jsonData[jsonData.length - 1][1] + " °C,");
-		$("#lasthum").html(jsonData[jsonData.length - 1][2] + "%");
+		if (jsonData.length > 0) {
+			$("#lasttemp").html(jsonData[jsonData.length - 1][1] + " °C,");
+			$("#lasthum").html(jsonData[jsonData.length - 1][2] + "%");
+		} else {
+			$("#lasttemp").html("- °C,");
+			$("#lasthum").html("-%");
+		}
 		
 		for (var i = 0 ; i < jsonData.length ; i++) {
 			jsonData[i][0] = new Date(jsonData[i][0]);
@@ -50,14 +55,20 @@ function drawBasic() {
       data.addColumn('datetime', 'Aeg');
       data.addColumn('number', 'temperatuur');
       data.addColumn('number', 'õhuniiskus');
-      data.addColumn({type: 'string', role: 'annotation'});
+      data.addColumn('number', 'mull');
+//      data.addColumn({type: 'number', role: 'annotation'});
 
       data.addRows(jsonData);
       
       var options = {
         series: {
         	0: {axis: 'Temperatuur'},
-        	1: {axis: 'Niiskus'}
+        	1: {axis: 'Niiskus'},
+        	2: {
+        		lineWidth: 0,
+        		pointSize: 25,
+        		visibleInLegend: false
+    		}
         },
         axes: {
         	x: {

@@ -2,6 +2,10 @@ package com.po.iot;
 
 import static com.po.iot.brewdata.public_.tables.Bubbledata.BUBBLEDATA;
 import static com.po.iot.brewdata.public_.tables.Environmentdata.ENVIRONMENTDATA;
+import static org.jooq.impl.DSL.inline;
+import static org.jooq.impl.DSL.max;
+import static org.jooq.impl.DSL.one;
+import static org.jooq.impl.DSL.select;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -10,9 +14,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jooq.DSLContext;
-import org.jooq.Result;
 import org.jooq.Record3;
-import org.jooq.impl.DSL;
+import org.jooq.Record4;
+import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -87,28 +91,30 @@ public class SensorDataController {
 	@RequestMapping(value = "/joined", method = RequestMethod.GET)
 	public DataList joined(@RequestParam(value="hours", defaultValue="48") long hours) {
 		long from = System.currentTimeMillis() - hours * 60 * 60 * 1000;
-		Result<Record3<Long, Integer, BigDecimal>> data = dsl
+		Result<Record4<Long, BigDecimal, BigDecimal, Integer>> data = dsl
 				.select(
-						BUBBLEDATA.TIMESTAMP,
-						DSL.val(1).as("bubble"),
-						DSL.val(null, BigDecimal.class).as(ENVIRONMENTDATA.TEMPERATURE)
-					).from(BUBBLEDATA).where(BUBBLEDATA.TIMESTAMP.greaterOrEqual(from))
-				.unionAll(DSL.select(
 						ENVIRONMENTDATA.TIMESTAMP.as(BUBBLEDATA.TIMESTAMP),
-						DSL.val(null, Integer.class).as("bubble"),
-						ENVIRONMENTDATA.TEMPERATURE
-					).from(ENVIRONMENTDATA).where(ENVIRONMENTDATA.TIMESTAMP.greaterOrEqual(from)))
-				.orderBy(DSL.one().desc()).fetch();
+						ENVIRONMENTDATA.TEMPERATURE,
+						ENVIRONMENTDATA.HUMIDITY,
+						inline(null, Integer.class).as("bubble")
+					).from(ENVIRONMENTDATA).where(ENVIRONMENTDATA.TIMESTAMP.greaterOrEqual(from))
+				.unionAll(select(
+						BUBBLEDATA.TIMESTAMP,
+						inline(null, BigDecimal.class),
+						inline(null, BigDecimal.class),
+						inline(1).as("bubble")
+					).from(BUBBLEDATA).where(BUBBLEDATA.TIMESTAMP.greaterOrEqual(from)))
+				.orderBy(one().desc()).fetch();
 		List<Object[]> bubbleTimestamps = new ArrayList<Object[]>();
-		for (Record3<Long, Integer, BigDecimal> rec : data) {
-			bubbleTimestamps.add(new Object[]{rec.get(BUBBLEDATA.TIMESTAMP), rec.get(ENVIRONMENTDATA.TEMPERATURE), rec.getValue("bubble")});
+		for (Record4<Long, BigDecimal, BigDecimal, Integer> rec : data) {
+			bubbleTimestamps.add(new Object[]{rec.get(BUBBLEDATA.TIMESTAMP), rec.get(ENVIRONMENTDATA.TEMPERATURE), rec.get(ENVIRONMENTDATA.HUMIDITY), rec.getValue("bubble")});
 		}
 		return new DataList(bubbleTimestamps);
 	}
 	
 	@RequestMapping(value = "/last", method = RequestMethod.GET)
 	public EnvData last() {
-		long maxTs = dsl.select(DSL.max(ENVIRONMENTDATA.TIMESTAMP)).from(ENVIRONMENTDATA).fetch().get(0).value1();
+		long maxTs = dsl.select(max(ENVIRONMENTDATA.TIMESTAMP)).from(ENVIRONMENTDATA).fetch().get(0).value1();
 		EnvironmentdataRecord latestEnvData = dsl.selectFrom(ENVIRONMENTDATA).where(ENVIRONMENTDATA.TIMESTAMP.equal(maxTs)).fetchAny();
 		BubbledataRecord latestBubbleData = dsl.selectFrom(BUBBLEDATA).orderBy(BUBBLEDATA.TIMESTAMP.desc()).fetchAny();
 		return new EnvData(latestEnvData.getTimestamp(), latestEnvData.getTemperature().doubleValue(), latestEnvData.getHumidity().doubleValue(), latestBubbleData.getTimestamp());
