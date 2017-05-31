@@ -13,8 +13,9 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <input type="text" width="2" id="hours" value="8"><input type="button" value="... viimast tundi" onclick="lae()">
-<div id="chart_div"></div>
+<div id="env_chart_div"></div>
 <span id="lasttemp" class="bignumber"></span>&nbsp;&nbsp;&nbsp;<span id="lasthum" class="bignumber"></span>
+<div id="bubble_chart_div"></div>
 <script type="text/javascript">
 
 var tempData = new Array();
@@ -22,18 +23,19 @@ $(document).ready(function() {
 });
 
 google.charts.load('current', {packages: ['corechart', 'line']});
-google.charts.setOnLoadCallback(drawBasic);
+google.charts.setOnLoadCallback(lae);
 
 function lae() {
-	drawBasic();
+	drawEnv();
+	drawBubble();
 }
 
-function drawBasic() {
+function drawEnv() {
 		var jsonData = $.ajax({
-		    url: "/joined?hours=" + $("#hours").val(),
+		    url: "/temperature?hours=" + $("#hours").val(),
 		    dataType: "json",
 		    async: false
-		}).responseJSON.data;
+		}).responseJSON.temperatures;
 		
 		if (jsonData.length > 0) {
 			$("#lasttemp").html(jsonData[jsonData.length - 1][1] + " °C,");
@@ -55,7 +57,7 @@ function drawBasic() {
       data.addColumn('datetime', 'Aeg');
       data.addColumn('number', 'temperatuur');
       data.addColumn('number', 'õhuniiskus');
-      data.addColumn('number', 'mull');
+//      data.addColumn('number', 'mull');
 //      data.addColumn({type: 'number', role: 'annotation'});
 
       data.addRows(jsonData);
@@ -90,10 +92,59 @@ function drawBasic() {
         }
       };
 
-      var chart = new google.charts.Line(document.getElementById('chart_div'));
+      var chart = new google.charts.Line(document.getElementById('env_chart_div'));
 
       chart.draw(data, options);
     }
+
+function drawBubble() {
+	var jsonData = $.ajax({
+	    url: "/bubbles?hours=" + $("#hours").val(),
+	    dataType: "json",
+	    async: false
+	}).responseJSON.timestamps;
+	
+	for (var i = 0 ; i < jsonData.length ; i++) {
+		jsonData[i][0] = new Date(jsonData[i][0]);
+	}
+
+  var data = new google.visualization.DataTable();
+
+  data.addColumn('datetime', 'Aeg');
+  data.addColumn('number', 'mull');
+
+  data.addRows(jsonData);
+  
+  var options = {
+    series: {
+    	0: {
+    		lineWidth: 0,
+    		pointSize: 25,
+    		visibleInLegend: false
+		}
+    },
+    axes: {
+    	x: {
+    		title: 'Aeg',
+    	},
+    	y: {
+    		all: {
+    			format: {
+    				pattern: 'decimal'
+    			}
+    		},
+    		Mull: {
+    			label: 'Mull'
+    		},
+    	}
+    }
+  };
+
+  var chart = new google.charts.Line(document.getElementById('bubble_chart_div'));
+
+  chart.draw(data, options);
+}
+
 </script>
 </body>
 </html>
