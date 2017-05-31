@@ -65,12 +65,7 @@ function drawEnv() {
       var options = {
         series: {
         	0: {axis: 'Temperatuur'},
-        	1: {axis: 'Niiskus'},
-        	2: {
-        		lineWidth: 0,
-        		pointSize: 25,
-        		visibleInLegend: false
-    		}
+        	1: {axis: 'Niiskus'}
         },
         axes: {
         	x: {
@@ -104,8 +99,18 @@ function drawBubble() {
 	    async: false
 	}).responseJSON.timestamps;
 	
+	var byMinute = Array();
+	var bMi = -1;
+	var millisInMinute = 60000;
+	
 	for (var i = 0 ; i < jsonData.length ; i++) {
-		jsonData[i][0] = new Date(jsonData[i][0]);
+		var minute = new Date(Math.floor(jsonData[i][0] / millisInMinute) * millisInMinute);
+		if (byMinute.length <= 0 || minute.getTime() !== byMinute[bMi][0].getTime()) {
+			bMi++;
+			byMinute[bMi] = [minute, 1];
+		} else {
+			byMinute[bMi][1]++;
+		}
 	}
 
   var data = new google.visualization.DataTable();
@@ -113,15 +118,11 @@ function drawBubble() {
   data.addColumn('datetime', 'Aeg');
   data.addColumn('number', 'mull');
 
-  data.addRows(jsonData);
+  data.addRows(byMinute);
   
   var options = {
     series: {
-    	0: {
-    		lineWidth: 0,
-    		pointSize: 25,
-    		visibleInLegend: false
-		}
+    	0: { axis: 'Mull' }
     },
     axes: {
     	x: {
@@ -134,7 +135,7 @@ function drawBubble() {
     			}
     		},
     		Mull: {
-    			label: 'Mull'
+    			label: 'Mulle minutis'
     		},
     	}
     }
