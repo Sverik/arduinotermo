@@ -53,11 +53,11 @@ void loop() {
   }
 
   // check bubble
-  sensorValue = analogRead(sensorPin);
-  if (sensorValue > 512 && lastBubbleTime + bubbleMinInterval < time) {
-    lastBubbleTime = time;
-    recordBubble();
-  }
+  //sensorValue = analogRead(sensorPin);
+  //if (sensorValue > 512 && lastBubbleTime + bubbleMinInterval < time) {
+  //  lastBubbleTime = time;
+  //  recordBubble();
+  //}
 
   delay (25);
 }
