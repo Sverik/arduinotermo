@@ -25,7 +25,7 @@ int sensorPin = A0;    // select the input pin for the potentiometer
 int sensorValue = 0;  // variable to store the value coming from the sensor
 
  char* connector = "rest";
- char* server = "192.168.1.227";
+ char* server = "192.168.1.231";
  char* method = "POST";
  String resource;
 void setup() {
