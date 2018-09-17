@@ -32,9 +32,9 @@ function lae() {
 
 function drawEnv() {
 		var jsonData = $.ajax({
-		    url: "/temperature?hours=" + $("#hours").val(),
-		    dataType: "json",
-		    async: false
+			url: "/temperature?hours=" + $("#hours").val(),
+			dataType: "json",
+			async: false
 		}).responseJSON.temperatures;
 		
 		if (jsonData.length > 0) {
@@ -52,59 +52,59 @@ function drawEnv() {
 		dateFormatter.format(jsonData, 0);
  */		
 
-      var data = new google.visualization.DataTable();
+	  var data = new google.visualization.DataTable();
 
-      data.addColumn('datetime', 'Aeg');
-      data.addColumn('number', 'temperatuur');
-      data.addColumn('number', 'õhuniiskus');
-//      data.addColumn('number', 'mull');
-//      data.addColumn({type: 'number', role: 'annotation'});
+	  data.addColumn('datetime', 'Aeg');
+	  data.addColumn('number', 'temperatuur');
+	  data.addColumn('number', 'õhuniiskus');
+//	  data.addColumn('number', 'mull');
+//	  data.addColumn({type: 'number', role: 'annotation'});
 
-      data.addRows(jsonData);
-      
-      var options = {
-        series: {
-        	0: {axis: 'Temperatuur'},
-        	1: {axis: 'Niiskus'}
-        },
-        axes: {
-        	x: {
-        		title: 'Aeg',
-        	},
-        	y: {
-        		all: {
-        			format: {
-        				pattern: 'decimal'
-        			}
-        		},
-        		Temperatuur: {
-        			label: 'Temperatuur',
-        			range: {
-        				min: 15,
-        				max: 25
-    				}
-        		},
-        		Niiskus: {
-        			label: 'Suhteline õhuniiskus',
-        			range: {
-        				min: 40,
-        				max: 60
-    				}
-        		}
-        	}
-        }
-      };
+	  data.addRows(jsonData);
+	  
+	  var options = {
+		series: {
+			0: {axis: 'Temperatuur'},
+			1: {axis: 'Niiskus'}
+		},
+		axes: {
+			x: {
+				title: 'Aeg',
+			},
+			y: {
+				all: {
+					format: {
+						pattern: 'decimal'
+					}
+				},
+				Temperatuur: {
+					label: 'Temperatuur',
+					range: {
+						min: 15,
+						max: 25
+					}
+				},
+				Niiskus: {
+					label: 'Suhteline õhuniiskus',
+					range: {
+						min: 40,
+						max: 60
+					}
+				}
+			}
+		}
+	  };
 
-      var chart = new google.charts.Line(document.getElementById('env_chart_div'));
+	  var chart = new google.charts.Line(document.getElementById('env_chart_div'));
 
-      chart.draw(data, options);
-    }
+	  chart.draw(data, options);
+	}
 
 function drawBubble() {
 	var jsonData = $.ajax({
-	    url: "/bubbles?hours=" + $("#hours").val(),
-	    dataType: "json",
-	    async: false
+		url: "/bubbles?hours=" + $("#hours").val(),
+		dataType: "json",
+		async: false
 	}).responseJSON.timestamps;
 	
 	var byMinute = Array();
@@ -129,24 +129,24 @@ function drawBubble() {
   data.addRows(byMinute);
   
   var options = {
-    series: {
-    	0: { axis: 'Mull' }
-    },
-    axes: {
-    	x: {
-    		title: 'Aeg',
-    	},
-    	y: {
-    		all: {
-    			format: {
-    				pattern: 'decimal'
-    			}
-    		},
-    		Mull: {
-    			label: 'Mulle minutis'
-    		},
-    	}
-    }
+	series: {
+		0: { axis: 'Mull' }
+	},
+	axes: {
+		x: {
+			title: 'Aeg',
+		},
+		y: {
+			all: {
+				format: {
+					pattern: 'decimal'
+				}
+			},
+			Mull: {
+				label: 'Mulle minutis'
+			},
+		}
+	}
   };
 
   var chart = new google.charts.Line(document.getElementById('bubble_chart_div'));
