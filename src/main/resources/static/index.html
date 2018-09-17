@@ -22,7 +22,7 @@ var tempData = new Array();
 $(document).ready(function() {
 });
 
-google.charts.load('current', {packages: ['corechart', 'line']});
+google.charts.load('current', {packages: ['line']});
 google.charts.setOnLoadCallback(lae);
 
 function lae() {
@@ -78,10 +78,18 @@ function drawEnv() {
         			}
         		},
         		Temperatuur: {
-        			label: 'Temperatuur'
+        			label: 'Temperatuur',
+        			range: {
+        				min: 15,
+        				max: 25
+    				}
         		},
         		Niiskus: {
-        			label: 'Suhteline õhuniiskus'
+        			label: 'Suhteline õhuniiskus',
+        			range: {
+        				min: 40,
+        				max: 60
+    				}
         		}
         	}
         }
