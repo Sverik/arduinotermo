@@ -40,11 +40,13 @@ dependencies {
 	jooqRuntime('com.h2database:h2')
 }
 
+def h2init = project.hasProperty('h2init') ? project.property('h2init') : ''
+
 jooq {
    brewdata(sourceSets.main) {
        jdbc {
            driver = 'org.h2.Driver'
-           url = 'jdbc:h2:~/brewmon/data'
+           url = "jdbc:h2:~/brewmon/data;$h2init"
            user = 'sa'
            password = ''
        }
