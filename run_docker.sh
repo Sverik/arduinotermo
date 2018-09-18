@@ -1,1 +1,1 @@
-docker run --rm -it -v /home/kasutaja/brewmon/:/root/brewmon/ -p 8080:8080 brewmon
+docker run --name brewmon -d -v /home/viiesratas/brewmon/:/root/brewmon/ -p 8080:8080 brewmon
