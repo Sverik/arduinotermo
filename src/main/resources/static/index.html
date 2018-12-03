@@ -30,6 +30,16 @@ function lae() {
 	drawBubble();
 }
 
+function getParam(urlParams, paramName, defaultValue) {
+	if (urlParams) {
+		var val = urlParams.get(paramName);
+		if (val) {
+    		return parseInt(val);
+		}
+	}
+    return defaultValue;
+}
+
 function drawEnv() {
 		var jsonData = $.ajax({
 			url: "/temperature?hours=" + $("#hours").val(),
@@ -62,6 +72,13 @@ function drawEnv() {
 
 	  data.addRows(jsonData);
 	  
+	  const urlParams = new URLSearchParams(window.location.search);
+
+	  const temp_min = getParam(urlParams, "temp_min", 15);
+	  const temp_max = getParam(urlParams, "temp_max", 25);
+	  const  hum_min = getParam(urlParams,  "hum_min", 40);
+	  const  hum_max = getParam(urlParams,  "hum_max", 60);
+	  
 	  var options = {
 		series: {
 			0: {axis: 'Temperatuur'},
@@ -80,15 +97,15 @@ function drawEnv() {
 				Temperatuur: {
 					label: 'Temperatuur',
 					range: {
-						min: 15,
-						max: 25
+						min: temp_min,
+						max: temp_max
 					}
 				},
 				Niiskus: {
 					label: 'Suhteline õhuniiskus',
 					range: {
-						min: 40,
-						max: 60
+						min: hum_min,
+						max: hum_max
 					}
 				}
 			}
